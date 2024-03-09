@@ -106,12 +106,12 @@ class UserService:
 
         if isinstance(ingredients, str):
             await callback.answer(
-                text=ingredients,
+                text="🔖 " + ingredients,
                 show_alert=True
             )
         else:
             await callback.answer(
-                text='Ингредиенты не обнаружены'
+                text='Ингредиенты не найдены'
             )
 
     @staticmethod
@@ -125,8 +125,8 @@ class UserService:
             .where(Cart.user_id == callback.from_user.id)
             .where(Cart.food_id == callback_data.food_id)
         )
-        cart: Cart = cart_query.scalar_one_or_none()
 
+        cart: Cart = cart_query.scalar_one_or_none()
         keyboard = inline.menu(callback_data.page, callback_data.food_id, callback_data.food_type)
 
         if isinstance(cart, Cart):
@@ -156,11 +156,10 @@ class UserService:
 
         if isinstance(cart, Cart):
             cart.quantity = cart.quantity + 1
-            await session.merge(cart)
         else:
             cart = Cart(user_id=callback.from_user.id, food_id=callback_data.food_id, quantity=1)
-            await session.merge(cart)
 
+        await session.merge(cart)
         await callback.message.edit_reply_markup(
             reply_markup=inline.cart_menu(callback_data.page, callback_data.food_id, callback_data.food_type,
                                           cart.quantity)
@@ -183,8 +182,5 @@ class UserService:
             for row in carts:
                 main_price += row[0] * row[1]
 
-            await callback.answer(
-                text=f"Общая сумма: {main_price} ₽",
-                show_alert=False
-            )
+            await callback.answer(text=f"Общая сумма: {main_price} ₽")
 

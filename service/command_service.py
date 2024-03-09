@@ -3,6 +3,7 @@ from typing import Any
 
 import pytz
 from aiogram import types, html
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import *
@@ -24,7 +25,10 @@ class CommandService:
         time.replace(tzinfo=pytz.timezone("Europe/Moscow"))
 
         await session.merge(User(id=message.from_user.id, username=message.from_user.username, creation_date_time=time))
-        await message.reply(
+        await message.answer_sticker(
+            sticker=sticker.HELLO_STICKER
+        )
+        await message.answer(
             text=f"Привет, <b>{html.quote(message.from_user.full_name)}</b>"
         )
 
@@ -36,3 +40,31 @@ class CommandService:
             text=response_message.CMD_MENU_MSG,
             reply_markup=inline.food_type_board()
         )
+
+    @staticmethod
+    async def cmd_cart(
+            message: types.Message,
+            session: AsyncSession
+    ) -> Any:
+        cart_query = await session.execute(
+            select(Cart.quantity, Food.price, Food.name)
+            .join_from(Cart, Food)
+            .where(Cart.user_id == message.from_user.id)
+        )
+        carts = cart_query.all()
+
+        if isinstance(carts, list) and carts:
+            main_price = 0
+            main_text = "<b>Ваша корзина 🛒</b>\n\n"
+            for row in carts:
+                main_price += row[0] * row[1]
+                main_text += f"🍽 <b>{row[2]}</b>\n<b>{row[0]} шт.</b> x <b>{row[1]}₽</b> = <b>{row[0] * row[1]}₽</b>\n\n"
+            main_text += f"Итого: <b>{main_price} ₽</b>"
+            await message.answer(
+                text=main_text
+            )
+        else:
+            await message.answer(
+                text="Ваша корзина пуста 🛒\nВыберите категорию, чтобы что-то выбрать 📝",
+                reply_markup=inline.food_type_board()
+            )

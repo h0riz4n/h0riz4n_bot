@@ -26,3 +26,11 @@ async def cmd_admin(
         message: types.Message
 ) -> Any:
     await CommandService.cmd_menu(message)
+
+
+@router.message(Command('cart'))
+async def cmd_cart(
+        message: types.Message,
+        session: AsyncSession
+) -> Any:
+    await CommandService.cmd_cart(message, session)

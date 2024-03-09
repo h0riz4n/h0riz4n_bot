@@ -18,6 +18,7 @@ class ThrottlingMiddleware(BaseMiddleware):
         """
         :param limit: лимит на количество сообщений в минуту
         """
+        super().__init__()
         self.__storage = RedisStorage.from_url('redis://:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}'.format(
             REDIS_PASSWORD=config.redis_password,
             REDIS_HOST=config.redis_host,

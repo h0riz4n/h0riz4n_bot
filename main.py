@@ -37,7 +37,7 @@ async def main():
     bot = Bot(config.token, default=bot_default)
     dp = Dispatcher()
 
-    dp.include_routers(command_router, user_router)
+    dp.include_routers(command_router, user_router, advice_router)
 
     dp["async_engine"] = engine
     dp["async_session"] = session_maker

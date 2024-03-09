@@ -33,10 +33,10 @@ class TimeMiddleware(BaseMiddleware):
         time = datetime.now()
         time.replace(tzinfo=pytz.timezone("Europe/Moscow"))
 
-        start_time = datetime.combine(time.date(), datetime.strptime(self.__start_time, '%H:%M:%S').time())
-        end_time = datetime.combine(time.date(), datetime.strptime(self.__end_time, '%H:%M:%S').time())
+        start_time = datetime.strptime(self.__start_time, '%H:%M:%S').time()
+        end_time = datetime.strptime(self.__end_time, '%H:%M:%S').time()
 
-        if start_time < time < end_time:
+        if start_time <= time.time() < end_time:
             return await handler(event, data)
         else:
             if event.message:

@@ -1,0 +1,7 @@
+aiogram==3.4.1
+SQLAlchemy==2.0.28
+asyncpg==0.29.0
+redis==5.0.2
+pydantic-settings==2.2.1
+pydantic==2.6.3
+pytz==2024.1

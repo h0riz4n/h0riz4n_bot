@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram.utils.keyboard import InlineKeyboardMarkup
 
 from db import *
 from keyboard.inline import inline_keyboard as inline
@@ -16,7 +17,7 @@ class Util:
             food: Food,
             page: int,
             session: AsyncSession
-    ):
+    ) -> InlineKeyboardMarkup:
         cart_query = await session.execute(select(Cart.quantity)
                                            .where(Cart.user_id == user_id)
                                            .where(Cart.food_id == food.id)

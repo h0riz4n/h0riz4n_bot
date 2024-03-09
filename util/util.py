@@ -18,10 +18,11 @@ class Util:
             page: int,
             session: AsyncSession
     ) -> InlineKeyboardMarkup:
-        cart_query = await session.execute(select(Cart.quantity)
-                                           .where(Cart.user_id == user_id)
-                                           .where(Cart.food_id == food.id)
-                                           )
+        cart_query = await session.execute(
+            select(Cart.quantity)
+            .where(Cart.user_id == user_id)
+            .where(Cart.food_id == food.id)
+        )
         quantity: int = cart_query.scalar_one_or_none()
 
         if isinstance(quantity, int):

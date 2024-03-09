@@ -9,5 +9,4 @@ async def set_ui_settings(bot: Bot):
     ]
     await bot.set_my_description("")
     await bot.set_my_short_description("")
-    # await bot.set_my_name("RestaurantBot")
     await bot.set_my_commands(commands=commands, scope=BotCommandScopeAllPrivateChats())

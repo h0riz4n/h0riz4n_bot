@@ -17,7 +17,7 @@ from db import *
 async def startup(
         async_engine: AsyncEngine,
         async_session: async_sessionmaker[AsyncSession],
-        bot: Bot,
+        bot: Bot
 ) -> Any:
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -33,6 +33,13 @@ async def startup(
     await bot.delete_webhook(drop_pending_updates=False)
 
 
+async def shutdown(
+        async_session: async_sessionmaker[AsyncSession]
+) -> Any:
+    await async_session().close()
+    logging.info('DB connection is closed')
+
+
 async def main():
     bot = Bot(config.token, default=bot_default)
     dp = Dispatcher()
@@ -41,7 +48,9 @@ async def main():
 
     dp["async_engine"] = engine
     dp["async_session"] = session_maker
+
     dp.startup.register(startup)
+    dp.shutdown.register(shutdown)
 
     dp.update.middleware.register(DbSessionMiddleware(session_pool=session_maker))
     dp.callback_query.middleware.register(CallbackAnswerMiddleware())

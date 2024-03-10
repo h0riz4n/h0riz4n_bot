@@ -94,3 +94,14 @@ def cart_menu(
         )
     )
     return builder.as_markup()
+
+
+def make_order_board() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(
+            text='Оформить заказ 📝',
+            callback_data='make_order'
+        )
+    )
+    return builder.as_markup()

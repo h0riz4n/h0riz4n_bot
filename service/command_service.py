@@ -22,9 +22,9 @@ class CommandService:
             session: AsyncSession
     ) -> Any:
         time = datetime.now(pytz.timezone('Europe/Moscow'))
-        start_time = datetime.combine(time.date(), time.time())
+        time = datetime.combine(time.date(), time.time())
 
-        await session.merge(User(id=message.from_user.id, username=message.from_user.username, creation_date_time=start_time))
+        await session.merge(User(id=message.from_user.id, username=message.from_user.username, creation_date_time=time))
         await message.answer_sticker(
             sticker=sticker.HELLO_STICKER
         )
@@ -61,7 +61,8 @@ class CommandService:
                 main_text += f"🍽 <b>{row[2]}</b>\n<b>{row[0]} шт.</b> x <b>{row[1]}₽</b> = <b>{row[0] * row[1]}₽</b>\n\n"
             main_text += f"Итого: <b>{main_price} ₽</b>"
             await message.answer(
-                text=main_text
+                text=main_text,
+                reply_markup=inline.make_order_board()
             )
         else:
             await message.answer(

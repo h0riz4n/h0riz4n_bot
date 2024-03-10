@@ -69,3 +69,12 @@ async def callback_get_cart(
         session: AsyncSession
 ) -> Any:
     await UserService.callback_get_cart(callback, session)
+
+
+@router.callback_query(F.data == 'make_order')
+async def callback_make_order(
+        callback: types.CallbackQuery,
+        session: AsyncSession,
+        state: FSMContext
+) -> Any:
+    await UserService.callback_make_order(callback, session, state)

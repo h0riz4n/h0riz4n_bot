@@ -1,9 +1,11 @@
 from typing import Any
 
 from aiogram import types
+from aiogram.fsm.context import FSMContext
 from aiogram.types import InputMediaPhoto
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.functions import count
 
 from db import *
 from constant import *
@@ -109,10 +111,6 @@ class UserService:
                 text="🔖 " + ingredients,
                 show_alert=True
             )
-        else:
-            await callback.answer(
-                text='Ингредиенты не найдены'
-            )
 
     @staticmethod
     async def callback_cart_remove(
@@ -135,7 +133,8 @@ class UserService:
             else:
                 cart.quantity = cart.quantity - 1
                 await session.merge(cart)
-                keyboard = inline.cart_menu(callback_data.page, callback_data.food_id, callback_data.food_type, cart.quantity)
+                keyboard = inline.cart_menu(callback_data.page, callback_data.food_id, callback_data.food_type,
+                                            cart.quantity)
 
         await callback.message.edit_reply_markup(
             reply_markup=keyboard
@@ -184,3 +183,20 @@ class UserService:
 
             await callback.answer(text=f"Общая сумма: {main_price} ₽")
 
+    @staticmethod
+    async def callback_make_order(
+            callback: types.CallbackQuery,
+            session: AsyncSession,
+            state: FSMContext
+    ) -> Any:
+        cart_query = await session.execute(
+            select(func.count(Cart.food_id))
+            .where(Cart.user_id == callback.from_user.id)
+        )
+        cart_count: int = cart_query.scalar_one_or_none()
+
+        if isinstance(cart_count, int):
+            await callback.answer(
+                text=str(cart_count),
+                show_alert=True
+            )

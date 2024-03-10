@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Callable, Awaitable, Dict, Any
 
 import pytz
-from aiogram import BaseMiddleware, Bot
+from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
 
 from constant import *

@@ -3,7 +3,7 @@ import logging
 import sys
 from typing import Any
 
-from aiogram import Dispatcher, Bot
+from aiogram import Dispatcher, Bot, F
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
@@ -45,7 +45,8 @@ async def main():
 
     dp.update.middleware.register(DbSessionMiddleware(session_pool=session_maker))
     dp.callback_query.middleware.register(CallbackAnswerMiddleware())
-    dp.update.outer_middleware.register(TimeMiddleware(start_time='10:00:00', end_time='21:00:00'))
+    dp.message.outer_middleware.register(TimeMiddleware())
+    dp.callback_query.outer_middleware.register(TimeMiddleware())
     # dp.message.outer_middleware.register(ThrottlingMiddleware(limit=config.limit))
 
     await dp.start_polling(bot)

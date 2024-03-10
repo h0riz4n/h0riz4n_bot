@@ -5,6 +5,8 @@ class Settings(BaseSettings):
     token: str
     limit: int
     admins: list
+    start_time: str
+    end_time: str
     db_host: str
     db_user: str
     db_password: str

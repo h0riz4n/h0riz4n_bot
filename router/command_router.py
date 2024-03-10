@@ -1,12 +1,10 @@
 from typing import Any
 
-from aiogram import Router, types, F, Bot, html
-from aiogram.filters import CommandStart, CommandObject, StateFilter, Command
-from aiogram.fsm.context import FSMContext
+from aiogram import Router, types, F
+from aiogram.filters import CommandStart, StateFilter, Command
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from service import *
-from filter import *
 
 router = Router(name="command_router")
 router.message.filter(F.chat.type == "private")

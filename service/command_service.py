@@ -21,10 +21,10 @@ class CommandService:
             message: types.Message,
             session: AsyncSession
     ) -> Any:
-        time = datetime.now()
-        time.replace(tzinfo=pytz.timezone("Europe/Moscow"))
+        time = datetime.now(pytz.timezone('Europe/Moscow'))
+        start_time = datetime.combine(time.date(), time.time())
 
-        await session.merge(User(id=message.from_user.id, username=message.from_user.username, creation_date_time=time))
+        await session.merge(User(id=message.from_user.id, username=message.from_user.username, creation_date_time=start_time))
         await message.answer_sticker(
             sticker=sticker.HELLO_STICKER
         )

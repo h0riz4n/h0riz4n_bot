@@ -27,8 +27,7 @@ class TimeMiddleware(BaseMiddleware):
                        event: TelegramObject,
                        data: Dict[str, Any]) -> Any:
 
-        time = datetime.now()
-        time.replace(tzinfo=pytz.timezone("Europe/Moscow"))
+        time = datetime.now(pytz.timezone('Europe/Moscow'))
 
         if event.from_user.id in config.admins or self.__start_time <= time.time() < self.__end_time:
             return await handler(event, data)

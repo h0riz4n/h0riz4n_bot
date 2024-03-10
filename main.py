@@ -45,9 +45,12 @@ async def main():
 
     dp.update.middleware.register(DbSessionMiddleware(session_pool=session_maker))
     dp.callback_query.middleware.register(CallbackAnswerMiddleware())
+
     dp.message.outer_middleware.register(TimeMiddleware())
     dp.callback_query.outer_middleware.register(TimeMiddleware())
+
     # dp.message.outer_middleware.register(ThrottlingMiddleware(limit=config.limit))
+    # dp.callback_query.outer_middleware.register(ThrottlingMiddleware(limit=config.limit))
 
     await dp.start_polling(bot)
 
